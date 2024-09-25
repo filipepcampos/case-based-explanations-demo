@@ -58,11 +58,6 @@ resource "azurerm_container_app" "api_app" {
       memory = "1.0Gi"
 
       env {
-        name  = "FASTAPI_FRONTEND_URL"
-        value = "http://0.0.0.0:3000"
-      }
-
-      env {
         name  = "FASTAPI_STORAGE_URL_PREFIX"
         value = "https://sfduyxbv.blob.core.windows.net/case-based-explanations/testing"
       }
