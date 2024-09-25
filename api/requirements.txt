@@ -1,0 +1,5 @@
+fastapi[standard]==0.115.0
+numpy==1.26.3
+scikit-learn==1.5.2
+torch==1.13.1
+torchvision==0.14.1
