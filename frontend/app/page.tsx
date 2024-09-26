@@ -1,7 +1,13 @@
+import { env } from "next-runtime-env";
+
 import Image from "next/image";
 import InteractiveSection from "../components/InteractiveSection";
 
 export default function Home() {
+  // Send a heartbeat to the API to wake up the API container
+  const host = env("NEXT_PUBLIC_API_HOST");
+  fetch(`${host}/`, { method: "GET"});
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
