@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-gray-900 max-w-screen-xl mx-auto w-full">
+    <footer className="max-w-screen-xl mx-auto w-full">
       <div>
         <div className="md:flex md:justify-between">
           <div />

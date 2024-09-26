@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { PredictionType, Canvas } from "./Canvas";
 import { env } from "next-runtime-env";
-import { ExplanationList, MockExplanationList } from "./ExplanationList";
+import { ExplanationList } from "./ExplanationList";
 import Confidence from "./Confidence";
 import TextualInformation from "./TextualInformation";
 
@@ -14,15 +14,11 @@ export default function InteractiveSection() {
     explanations: [],
   });
 
-  const [loading, setLoading] = useState(false);
-
   const onSubmit = (blob: Blob) => {
     const file = new File([blob], "canvas-image.png", { type: blob.type });
 
     const formData = new FormData();
     formData.append("file", file);
-
-    setLoading(true);
 
     // Send the file to the server
     const host = env("NEXT_PUBLIC_API_HOST");
@@ -42,16 +38,13 @@ export default function InteractiveSection() {
         } else {
           console.error("Failed to upload image.");
         }
-        setLoading(false);
       })
       .catch((error) => {
         console.error("Error:", error);
-        setLoading(false);
       });
   };
 
   const onClear = () => {
-    setLoading(false);
     setResult({
       prediction: null,
       confidence: null,
@@ -81,7 +74,6 @@ export default function InteractiveSection() {
       </div>
 
       <div className="mt-2">
-        {loading && !result.explanations && <MockExplanationList />}
         {result.explanations && <ExplanationList result={result} />}
       </div>
     </div>
