@@ -1,4 +1,4 @@
-name: Publish Frontend API Docker image
+name: Publish Frontend Docker image
 
 on:
   push:
@@ -38,5 +38,4 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: filipepcampos/frontend:latest
