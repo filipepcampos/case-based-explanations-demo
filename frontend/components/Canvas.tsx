@@ -20,14 +20,9 @@ export function Canvas({ setResult }: { setResult: (result: PredictionType) => v
 
   // Prevent scrolling on touch devices
   const isTouchDevice = useMediaQuery({ query: '(pointer: coarse)' });
-
-
-  if (isTouchDevice && isDrawing) {
-    document.body.style.overflow = "hidden";
-  } 
-  /*else {
-    document.body.style.overflow = "auto";
-  }*/
+  if (isTouchDevice) {
+    document.body.style.overflow = isDrawing ? "hidden" : "auto";
+  }
 
   const paintAt = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
     x = Math.floor(x / 10) * 10;
@@ -136,7 +131,6 @@ export function Canvas({ setResult }: { setResult: (result: PredictionType) => v
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.toBlob((blob) => {
-        // Convert Blob to File (optional but recommended)
         if (!blob) return;
 
         const file = new File([blob], "canvas-image.png", { type: blob.type });
@@ -152,11 +146,7 @@ export function Canvas({ setResult }: { setResult: (result: PredictionType) => v
         })
           .then((response) => {
             if (response.ok) {
-              console.log("Image uploaded successfully!");
-              console.log("Response:", response);
-
               response.json().then((data) => {
-                console.log("Data:", data);
                 setResult({
                     prediction: data.prediction,
                     confidence: data.confidence,
