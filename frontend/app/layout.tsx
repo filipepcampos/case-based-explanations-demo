@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PublicEnvScript } from 'next-runtime-env';
+import { PublicEnvScript } from "next-runtime-env";
 import localFont from "next/font/local";
 import "./globals.css";
 

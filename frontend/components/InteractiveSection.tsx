@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { PredictionType, Canvas } from "./Canvas";
-import Image from "next/image";
+import { env } from "next-runtime-env";
+import { ExplanationList, MockExplanationList } from "./ExplanationList";
+import Confidence from "./Confidence";
+import TextualInformation from "./TextualInformation";
 
 export default function InteractiveSection() {
   const [result, setResult] = useState<PredictionType>({
@@ -11,73 +14,75 @@ export default function InteractiveSection() {
     explanations: [],
   });
 
-  return (
-    <div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="pl-8">
-            <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-                <li className="mb-2">
-                    Get started by drawing a number from{" "}
-                    <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-                    0 to 9
-                    </code>
-                    .
-                </li>
-                <li className="mb-2">
-                    Submit and see a prediction alongside a set of examples which explain it.
-                </li>
-            </ol>
+  const [loading, setLoading] = useState(false);
 
-            { (result.prediction || result.prediction === 0) && result.confidence && (
-                <div>
-                <div className="mt-4 text-md">
-                    prediction: <span className="text-blue-700 dark:text-white text-3xl">{result.prediction}</span>
-                </div>
-                <div className="pt-4">
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 pb-2">
-                    <div
-                        className="bg-blue-600 h-2.5 rounded-full"
-                        style={{ width: result.confidence * 100 + "%" }}
-                    ></div>
-                    <div className="flex justify-between mt-1">
-                    <span className="text-xs text-blue-700 dark:text-white">
-                        Confidence
-                    </span>
-                    <span className="text-xs text-blue-700 dark:text-white">
-                        {Math.round(result.confidence * 100)}%
-                    </span>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            )}
+  const onSubmit = (blob: Blob) => {
+    const file = new File([blob], "canvas-image.png", { type: blob.type });
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    setLoading(true);
+
+    // Send the file to the server
+    const host = env("NEXT_PUBLIC_API_HOST");
+    fetch(host + "/predict", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setResult({
+              prediction: data.prediction,
+              confidence: data.confidence,
+              explanations: data.explanations,
+            });
+          });
+        } else {
+          console.error("Failed to upload image.");
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setLoading(false);
+      });
+  };
+
+  const onClear = () => {
+    setLoading(false);
+    setResult({
+      prediction: null,
+      confidence: null,
+      explanations: [],
+    });
+  };
+
+  return (
+    <div
+      className="flex-grow
+    "
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="w-full">
+          <TextualInformation />
         </div>
 
-                <div className="flex justify-center">
-                  <div className="w-1/2">
-                    <Canvas setResult={(result: PredictionType) => setResult(result)} />
-                  </div>
-                </div>
+        <div className="flex justify-center w-full">
+          <div className="w-1/2">
+            <Canvas onSubmit={onSubmit} onClear={onClear} />
+          </div>
+        </div>
+
+        <div className="w-full">
+          <Confidence result={result} />
+        </div>
       </div>
 
-      <div className="mt-8">
-        {result.explanations && (
-          <div className="flex gap-2 justify-center flex-wrap">
-            {result.explanations.map((explanation, index) => (
-              <div key={index}>
-              <span className="mb-1 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:text-gray-300"> { "explanation " + (index+1)} - <span className="">{explanation.split("/").at(-2)}</span></span>
-              
-              <Image
-                className="dark:invert-0 invert flex-shrink-0 rounded-lg border border-solid border-gray-200 dark:border-white"
-                src={explanation}
-                alt="Case-based explanation"
-                width={150}
-                height={150}
-              />
-              </div>
-            ))}
-          </div>
-        )}
+      <div className="mt-2">
+        {loading && !result.explanations && <MockExplanationList />}
+        {result.explanations && <ExplanationList result={result} />}
       </div>
     </div>
   );

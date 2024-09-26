@@ -27,9 +27,9 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "**.blob.core.windows.net",
-        port: '',
-      }
-    ]
+        port: "",
+      },
+    ],
   },
   output: "standalone",
   reactStrictMode: true,

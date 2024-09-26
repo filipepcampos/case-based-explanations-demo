@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { useMediaQuery } from 'react-responsive';
-import { env } from "next-runtime-env";
-import Image from "next/image";
+import { useMediaQuery } from "react-responsive";
 
 type PredictionType = {
   prediction: number | null;
@@ -11,15 +9,20 @@ type PredictionType = {
   explanations: string[];
 };
 
-export type { PredictionType};
+export type { PredictionType };
 
-export function Canvas({ setResult }: { setResult: (result: PredictionType) => void }) {
+export function Canvas({
+  onSubmit,
+  onClear,
+}: {
+  onSubmit: (blob: Blob) => void;
+  onClear: () => void;
+}) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
-
   // Prevent scrolling on touch devices
-  const isTouchDevice = useMediaQuery({ query: '(pointer: coarse)' });
+  const isTouchDevice = useMediaQuery({ query: "(pointer: coarse)" });
   if (isTouchDevice) {
     document.body.style.overflow = isDrawing ? "hidden" : "auto";
   }
@@ -32,7 +35,6 @@ export function Canvas({ setResult }: { setResult: (result: PredictionType) => v
       return;
     }
 
-    
     const thickness = 2;
 
     ctx.fillStyle = "black";
@@ -41,8 +43,7 @@ export function Canvas({ setResult }: { setResult: (result: PredictionType) => v
         ctx.fillRect(x + i * 10, y + j * 10, 10, 10);
       }
     }
-
-  }
+  };
 
   const startDrawing = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -90,7 +91,7 @@ export function Canvas({ setResult }: { setResult: (result: PredictionType) => v
         paintAt(ctx, offsetX, offsetY);
       }
     }
-  }
+  };
 
   const drawTouch = (event: React.TouchEvent<HTMLCanvasElement>) => {
     if (!isDrawing) return;
@@ -106,7 +107,7 @@ export function Canvas({ setResult }: { setResult: (result: PredictionType) => v
         paintAt(ctx, offsetX, offsetY);
       }
     }
-  }
+  };
 
   const stopDrawing = () => {
     setIsDrawing(false);
@@ -119,11 +120,7 @@ export function Canvas({ setResult }: { setResult: (result: PredictionType) => v
       if (ctx) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
-      setResult({
-        prediction: null,
-        confidence: null,
-        explanations: [],
-      });
+      onClear();
     }
   };
 
@@ -132,39 +129,13 @@ export function Canvas({ setResult }: { setResult: (result: PredictionType) => v
     if (canvas) {
       canvas.toBlob((blob) => {
         if (!blob) return;
-
-        const file = new File([blob], "canvas-image.png", { type: blob.type });
-
-        const formData = new FormData();
-        formData.append("file", file);
-
-        // Send the file to the server
-        const host = env('NEXT_PUBLIC_API_HOST');
-        fetch(host + "/predict", {
-          method: "POST",
-          body: formData,
-        })
-          .then((response) => {
-            if (response.ok) {
-              response.json().then((data) => {
-                setResult({
-                    prediction: data.prediction,
-                    confidence: data.confidence,
-                    explanations: data.explanations,
-                });
-              });
-            } else {
-              console.error("Failed to upload image.");
-            }
-          })
-          .catch((error) => console.error("Error:", error));
+        onSubmit(blob);
       }, "image/png"); // You can specify the image type and quality here
     }
   };
 
-
   return (
-    <div className="justify-center">
+    <div className="grid grid-cols-2 md:grid-cols-4 place-items-center">
       <canvas
         ref={canvasRef}
         onMouseDown={startDrawing}
@@ -177,22 +148,21 @@ export function Canvas({ setResult }: { setResult: (result: PredictionType) => v
         onTouchCancel={stopDrawing}
         width={280}
         height={280}
-        className="border border-solid border-black dark:invert"
+        className="border border-solid border-black dark:invert col-span-2 md:col-span-4"
       />
-      <div className="flex gap-4 items-center flex-col sm:flex-row mt-4">
-        <button
-          className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-30"
-          onClick={submitCanvas}
-        >
-          Submit{" "}
-        </button>
-        <button
-          className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-30"
-          onClick={clearCanvas}
-        >
-          Clear
-        </button>
-      </div>
+
+      <button
+        className="mt-4 mr-6 md:col-start-2 rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-30"
+        onClick={submitCanvas}
+      >
+        Submit{" "}
+      </button>
+      <button
+        className="mt-4 ml-6 md:col-start-3 rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-30"
+        onClick={clearCanvas}
+      >
+        Clear
+      </button>
     </div>
   );
 }
