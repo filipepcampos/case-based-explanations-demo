@@ -58,6 +58,10 @@ This project was built using [Next.js](https://nextjs.org/) for the frontend whi
 The model was trained using [PyTorch](https://pytorch.org/) and the [PyTorch Lightning](https://lightning.ai/docs/pytorch/stable/) framework.
 We deploy the website on [Azure Cloud](https://azure.microsoft.com) through the use of [Terraform](https://www.terraform.io/) scripts.
 
+**Infrastructure Diagram:**
+![Infrastructure](images/deployment.svg)
+
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Getting Started
