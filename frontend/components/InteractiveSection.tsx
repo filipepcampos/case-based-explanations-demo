@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
 import { PredictionType, Canvas } from "./Canvas";
-import { env } from "next-runtime-env";
 import { ExplanationList } from "./ExplanationList";
 import Confidence from "./Confidence";
 import TextualInformation from "./TextualInformation";
+import submitCanvas from "./submitCanvas";
+import { useState } from "react";
 
 export default function InteractiveSection() {
   const [result, setResult] = useState<PredictionType>({
@@ -14,36 +14,11 @@ export default function InteractiveSection() {
     explanations: [],
   });
 
-  const onSubmit = (blob: Blob) => {
-    const file = new File([blob], "canvas-image.png", { type: blob.type });
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    // Send the file to the server
-    const host = env("NEXT_PUBLIC_API_HOST");
-    fetch(host + "/predict", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            setResult({
-              prediction: data.prediction,
-              confidence: data.confidence,
-              explanations: data.explanations,
-            });
-          });
-        } else {
-          console.error("Failed to upload image.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
-
+  const onSubmit = async (formData: FormData) => {
+    const updatedPrediction = await submitCanvas({ canvasFormData: formData });
+    setResult(updatedPrediction);
+  }
+  
   const onClear = () => {
     setResult({
       prediction: null,

@@ -15,7 +15,7 @@ export function Canvas({
   onSubmit,
   onClear,
 }: {
-  onSubmit: (blob: Blob) => void;
+  onSubmit: (formData: FormData) => Promise<void>;
   onClear: () => void;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -129,7 +129,11 @@ export function Canvas({
     if (canvas) {
       canvas.toBlob((blob) => {
         if (!blob) return;
-        onSubmit(blob);
+        const file = new File([blob], "canvas-image.png", { type: blob.type });
+
+        const formData = new FormData();
+        formData.append("file", file);
+        onSubmit(formData);
       }, "image/png"); // You can specify the image type and quality here
     }
   };
