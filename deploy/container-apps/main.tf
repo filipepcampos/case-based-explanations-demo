@@ -28,14 +28,14 @@ resource "azurerm_container_app" "frontend_app" {
 
       env {
         name  = "NEXTJS_API_HOST"
-        value = "https://${azurerm_container_app.api_app.ingress[0].fqdn}"
+        value = "http://case-based-explanations-api"
       }
     }
   }
 
   ingress {
     allow_insecure_connections = true
-    external_enabled           = false
+    external_enabled           = true
     target_port                = 3000
     traffic_weight {
       latest_revision = true
@@ -55,7 +55,7 @@ resource "azurerm_container_app" "api_app" {
       name   = "fastapi"
       image  = "filipepcampos/api:latest"
       cpu    = 0.5
-      memory = "1.0Gi"
+      memory = "1Gi"
 
       env {
         name  = "FASTAPI_STORAGE_URL_PREFIX"
