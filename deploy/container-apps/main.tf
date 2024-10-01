@@ -35,7 +35,7 @@ resource "azurerm_container_app" "frontend_app" {
 
   ingress {
     allow_insecure_connections = true
-    external_enabled           = true
+    external_enabled           = false
     target_port                = 3000
     traffic_weight {
       latest_revision = true
