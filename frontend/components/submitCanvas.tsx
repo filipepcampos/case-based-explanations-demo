@@ -8,7 +8,7 @@ export default async function submitCanvas({
 }: {
   canvasFormData: FormData;
 }) {
-  const host = env("NEXT_PUBLIC_API_HOST");
+  const host = env("NEXTJS_API_HOST");
 
   let prediction: PredictionType = {
     prediction: null,
