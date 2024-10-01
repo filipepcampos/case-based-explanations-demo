@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   // Send a heartbeat to the API to wake up the API container
-  const host = env("NEXT_PUBLIC_API_HOST");
+  const host = env("NEXTJS_API_HOST");
   fetch(`${host}/`, { method: "GET" });
 
   return (
