@@ -61,6 +61,16 @@ We deploy the website on [Azure Cloud](https://azure.microsoft.com) through the 
 **Infrastructure Diagram:**
 ![Infrastructure](images/deployment.svg)
 
+| Step | Action |
+|-----|---|
+| 1 | User submits drawing to the Nextjs server |
+| 2 | Nextjs server passes the request to the prediction API |
+| 3 | Prediction API returns a prediction, confidence and a set of URLs pointing to explanation images |
+| 4 | Nextjs updates the frontend page |
+| 5 | Frontend requests the explanation images from the CDN |
+
+
+**Note**: While using a CDN, as shown in the infrastructure, would be ideal, this project omits this step for cost saving measures, since Azure Front Door is not available in the free Azure tier.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
