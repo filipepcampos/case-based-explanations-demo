@@ -31,3 +31,13 @@ variable "restart_policy" {
     error_message = "The restart_policy must be one of the following: Always, Never, OnFailure."
   }
 }
+
+variable "namecheap_user_name" {
+  type        = string
+  description = "The username for the Namecheap API."
+}
+
+variable "namecheap_api_key" {
+  type        = string
+  description = "The API key for the Namecheap API."
+}
