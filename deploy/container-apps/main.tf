@@ -7,7 +7,7 @@ resource "azurerm_resource_group" "rg" {
   name     = random_pet.rg_name.id
 }
 
-resource "azurerm_container_app_environment" "example" {
+resource "azurerm_container_app_environment" "ae" {
   name                = "Example-Environment"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -15,7 +15,7 @@ resource "azurerm_container_app_environment" "example" {
 
 resource "azurerm_container_app" "frontend_app" {
   name                         = "case-based-explanations-app"
-  container_app_environment_id = azurerm_container_app_environment.example.id
+  container_app_environment_id = azurerm_container_app_environment.ae.id
   resource_group_name          = azurerm_resource_group.rg.name
   revision_mode                = "Single"
 
@@ -46,7 +46,7 @@ resource "azurerm_container_app" "frontend_app" {
 
 resource "azurerm_container_app" "api_app" {
   name                         = "case-based-explanations-api"
-  container_app_environment_id = azurerm_container_app_environment.example.id
+  container_app_environment_id = azurerm_container_app_environment.ae.id
   resource_group_name          = azurerm_resource_group.rg.name
   revision_mode                = "Single"
 
@@ -72,5 +72,34 @@ resource "azurerm_container_app" "api_app" {
       latest_revision = true
       percentage      = 100
     }
+  }
+}
+
+resource "azurerm_container_app_custom_domain" "app_custom_domain" {
+  name                                     = "explanations.fcampos.dev"
+  container_app_id                         = azurerm_container_app.frontend_app.id
+
+  lifecycle {
+    // When using an Azure created Managed Certificate these values must be added to ignore_changes to prevent resource recreation.
+    ignore_changes = [certificate_binding_type, container_app_environment_certificate_id]
+  }
+
+  depends_on = [ namecheap_domain_records.my-domain ]
+}
+
+resource "namecheap_domain_records" "my-domain" {
+  domain = "fcampos.dev"
+  mode = "MERGE"
+
+  record {
+    hostname = "explanations"
+    type = "CNAME"
+    address = azurerm_container_app.frontend_app.ingress[0].fqdn
+  }
+
+  record {
+    hostname = "asuid.explanations"
+    type = "TXT"
+    address = azurerm_container_app_environment.ae.custom_domain_verification_id
   }
 }

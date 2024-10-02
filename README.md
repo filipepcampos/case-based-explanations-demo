@@ -12,7 +12,7 @@
     A website which demonstrates how case-based explanations help explain the rationale behind Machine Learning classifiers' decisions.
     <br />
     <br />
-    <a href="https://case-based-explanations-app.jollymushroom-90179c2d.westeurope.azurecontainerapps.io">View Demo</a>
+    <a href="https://explanations.fcampos.dev">View Demo</a>
     ·
     <a href="https://github.com/filipepcampos/case-based-explanations-demo/issues/new?labels=bug">Report Bug</a>
     ·
