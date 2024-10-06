@@ -1,4 +1,4 @@
-import { PredictionType } from "./Canvas";
+import { PredictionType } from "./canvas/PixelatedCanvas";
 
 export default function Confidence({ result }: { result: PredictionType }) {
   return (

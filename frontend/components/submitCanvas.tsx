@@ -1,7 +1,7 @@
 "use server";
 
 import { env } from "next-runtime-env";
-import { PredictionType } from "./Canvas";
+import { PredictionType } from "./canvas/PixelatedCanvas";
 
 export default async function submitCanvas({
   canvasFormData,

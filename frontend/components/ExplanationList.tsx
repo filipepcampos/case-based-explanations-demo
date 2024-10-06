@@ -1,4 +1,4 @@
-import { PredictionType } from "./Canvas";
+import { PredictionType } from "./canvas/PixelatedCanvas";
 import Image from "next/image";
 
 export function ExplanationList({ result }: { result: PredictionType }) {
