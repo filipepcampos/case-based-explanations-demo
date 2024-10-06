@@ -23,11 +23,11 @@ export default async function submitCanvas({
 
   if (response.ok) {
     const data = await response.json();
-    return prediction = {
+    return (prediction = {
       prediction: data.prediction,
       confidence: data.confidence,
       explanations: data.explanations,
-    };
+    });
   } else {
     return prediction;
   }
