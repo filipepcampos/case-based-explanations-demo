@@ -81,6 +81,7 @@ export function SmoothCanvas({
         const rect = canvas.getBoundingClientRect();
         const offsetX = clientX - rect.left;
         const offsetY = clientY - rect.top;
+        ctx.lineWidth = 20;
 
         ctx.lineTo(offsetX, offsetY);
         ctx.stroke();
