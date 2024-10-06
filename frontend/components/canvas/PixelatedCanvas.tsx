@@ -11,7 +11,7 @@ type PredictionType = {
 
 export type { PredictionType };
 
-export function Canvas({
+export function PixelatedCanvas({
   onSubmit,
   onClear,
 }: {
